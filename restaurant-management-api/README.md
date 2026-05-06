@@ -717,3 +717,10 @@ Embora o projeto atenda ao escopo da Fase 01, algumas melhorias podem ser consid
 A **Restaurant Management API** entrega uma base sólida para a primeira fase do sistema de gestão compartilhado de restaurantes. O projeto contempla os principais requisitos acadêmicos solicitados, apresentando uma API REST funcional, estruturada em camadas, integrada a banco relacional, documentada, testável via Postman e executável por Docker Compose.
 
 A solução foi construída com foco em organização, clareza arquitetural e possibilidade de evolução, permitindo que novas funcionalidades do domínio de restaurantes sejam incorporadas nas próximas fases do projeto sem comprometer a estrutura atual.
+
+## Repositório de Código
+
+Conforme solicitado nos entregáveis da Fase 01, o código-fonte da aplicação está disponibilizado em um repositório público no GitHub. Dessa forma, é possível realizar o download do projeto, consultar o histórico de versionamento, validar a estrutura de implementação e executar a aplicação em ambiente local ou conteinerizado.
+
+**Repositório GitHub:**  
+https://github.com/Andrefelix2810/restaurant-management-api
