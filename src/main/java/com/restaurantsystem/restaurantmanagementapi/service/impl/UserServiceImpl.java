@@ -12,8 +12,8 @@ import com.restaurantsystem.restaurantmanagementapi.exception.UserNotFoundExcept
 import com.restaurantsystem.restaurantmanagementapi.mapper.UserMapper;
 import com.restaurantsystem.restaurantmanagementapi.repository.UserRepository;
 import com.restaurantsystem.restaurantmanagementapi.service.UserService;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -2,29 +2,38 @@
 
 > Projeto desenvolvido para o **Tech Challenge — Fase 01** da Pós-Tech em Arquitetura e Desenvolvimento Java. A aplicação consiste em um backend REST para gerenciamento de usuários de um sistema compartilhado de restaurantes, contemplando cadastro, consulta, atualização, exclusão, troca de senha e validação de login, com persistência em banco relacional PostgreSQL e execução via Docker Compose.
 
+**Repositório GitHub:** https://github.com/Andrefelix2810/restaurant-management-api
+
+**Documento base:** `Postech - ADJ - Fase 1 - Tech Challenge.pdf`
+
 ---
 
 ## Sumário
 
 1. [Contexto Acadêmico](#contexto-acadêmico)
-2. [Objetivo do Projeto](#objetivo-do-projeto)
-3. [Escopo da Fase 01](#escopo-da-fase-01)
-4. [Tecnologias Utilizadas](#tecnologias-utilizadas)
-5. [Arquitetura da Solução](#arquitetura-da-solução)
-6. [Modelo de Domínio](#modelo-de-domínio)
-7. [Funcionalidades Implementadas](#funcionalidades-implementadas)
-8. [Endpoints da API](#endpoints-da-api)
-9. [Exemplos de Requisição](#exemplos-de-requisição)
-10. [Tratamento de Erros](#tratamento-de-erros)
-11. [Documentação Swagger / OpenAPI](#documentação-swagger--openapi)
-12. [Collections Postman](#collections-postman)
-13. [Configuração e Execução](#configuração-e-execução)
-14. [Docker e Docker Compose](#docker-e-docker-compose)
-15. [Estrutura do Projeto](#estrutura-do-projeto)
-16. [Aderência aos Requisitos da Fase 01](#aderência-aos-requisitos-da-fase-01)
-17. [Decisões Técnicas](#decisões-técnicas)
-18. [Possíveis Evoluções Futuras](#possíveis-evoluções-futuras)
-19. [Conclusão](#conclusão)
+2. [Repositório de Código](#repositório-de-código)
+3. [Objetivo do Projeto](#objetivo-do-projeto)
+4. [Escopo da Fase 01](#escopo-da-fase-01)
+5. [Requisitos do Enunciado e Atendimento](#requisitos-do-enunciado-e-atendimento)
+6. [Tecnologias Utilizadas](#tecnologias-utilizadas)
+7. [Arquitetura da Solução](#arquitetura-da-solução)
+8. [Qualidade do Código e Organização](#qualidade-do-código-e-organização)
+9. [Modelo de Domínio](#modelo-de-domínio)
+10. [Persistência JDBC e Modelo Relacional](#persistência-jdbc-e-modelo-relacional)
+11. [Funcionalidades Implementadas](#funcionalidades-implementadas)
+12. [Endpoints da API](#endpoints-da-api)
+13. [Exemplos de Requisição](#exemplos-de-requisição)
+14. [Tratamento de Erros](#tratamento-de-erros)
+15. [Documentação Swagger / OpenAPI](#documentação-swagger--openapi)
+16. [Collections Postman](#collections-postman)
+17. [Configuração e Execução](#configuração-e-execução)
+18. [Docker e Docker Compose](#docker-e-docker-compose)
+19. [Build, Testes e Validação](#build-testes-e-validação)
+20. [Estrutura do Projeto](#estrutura-do-projeto)
+21. [Aderência aos Requisitos da Fase 01](#aderência-aos-requisitos-da-fase-01)
+22. [Decisões Técnicas](#decisões-técnicas)
+23. [Possíveis Evoluções Futuras](#possíveis-evoluções-futuras)
+24. [Conclusão](#conclusão)
 
 ---
 
@@ -35,6 +44,18 @@ O **Tech Challenge — Fase 01** propõe a construção de um backend robusto pa
 O problema apresentado considera um grupo de restaurantes que, diante do alto custo de soluções individuais, decidiu construir uma plataforma comum para gerenciamento de suas operações. Dessa forma, os restaurantes passam a compartilhar uma solução tecnológica única, permitindo que os clientes escolham os estabelecimentos com base na qualidade da comida, atendimento e experiência oferecida, e não pela limitação técnica de seus sistemas de gestão.
 
 Nesta primeira fase, o foco está concentrado no desenvolvimento do backend responsável pelo **gerenciamento de usuários**, permitindo que clientes e donos de restaurantes sejam cadastrados e administrados por meio de uma API REST.
+
+---
+
+## Repositório de Código
+
+Conforme solicitado nos entregáveis da Fase 01, o código-fonte da aplicação está disponível em um repositório público no GitHub:
+
+```text
+https://github.com/Andrefelix2810/restaurant-management-api
+```
+
+O repositório permite baixar o projeto, consultar a estrutura de implementação, validar os arquivos de configuração, importar a collection Postman e executar a aplicação localmente ou via Docker Compose.
 
 ---
 
@@ -81,6 +102,27 @@ O escopo desta fase contempla exclusivamente funcionalidades de backend relacion
 
 ---
 
+## Requisitos do Enunciado e Atendimento
+
+O enunciado da Fase 01 solicita um backend completo com Spring Boot, focado em gerenciamento de usuários, com execução em Docker Compose, banco relacional, documentação, collection de testes e repositório aberto. A tabela abaixo consolida como cada ponto foi atendido neste projeto.
+
+| Solicitação do PDF | Implementação neste projeto | Evidência |
+|---|---|---|
+| Backend completo e robusto em Spring Boot | API REST organizada em camadas com controllers, services, repository, DTOs, mapper e tratamento global de exceções. | `src/main/java/com/restaurantsystem/restaurantmanagementapi` |
+| Foco em gerenciamento de usuários | Endpoints de cadastro, consulta, atualização, exclusão, troca de senha e validação de login. | `UserController` e `AuthController` |
+| Dois tipos de usuário | Enum `Role` com os perfis `CLIENT` e `RESTAURANT_OWNER`. | `src/main/java/.../enums/Role.java` |
+| Cadastro com nome, email, login, senha, data da última alteração e endereço | DTOs de entrada, objeto `User`, objeto `Address` e persistência na tabela `users`. | `UserCreateRequest`, `User`, `Address`, `schema.sql` |
+| Alteração de dados do usuário | Endpoint `PUT /users/{id}` com validação de e-mail/login duplicado. | `UserServiceImpl.update` |
+| Troca de senha | Endpoint `PATCH /users/{id}/password`, conferindo senha antiga e impedindo nova senha igual à atual. | `UserServiceImpl.updatePassword` |
+| Validação de login | Endpoint `POST /auth/login`, validando login e senha. | `AuthController` e `UserServiceImpl.login` |
+| Banco de dados relacional | PostgreSQL configurado via datasource Spring e Docker Compose. | `application.properties` e `docker-compose.yml` |
+| Docker Compose | Orquestração de `app` e `postgres`, com healthcheck do banco e dependência da aplicação. | `docker-compose.yml` |
+| Documentação do projeto | README completo com arquitetura, endpoints, exemplos, configuração, Docker, validação e decisões técnicas. | `README.md` |
+| Collection para testes | Collection Postman disponível para importação e execução manual dos endpoints. | `postman/Restaurant-API-Local.postman_collection.json` |
+| Repositório aberto | Código-fonte publicado no GitHub. | https://github.com/Andrefelix2810/restaurant-management-api |
+
+---
+
 ## Tecnologias Utilizadas
 
 | Tecnologia | Finalidade |
@@ -88,7 +130,7 @@ O escopo desta fase contempla exclusivamente funcionalidades de backend relacion
 | Java 17 | Linguagem principal do projeto. |
 | Spring Boot | Framework base para construção da aplicação. |
 | Spring Web MVC | Exposição dos endpoints REST. |
-| Spring Data JPA | Persistência e abstração de acesso ao banco de dados. |
+| Spring JDBC | Persistência e acesso ao banco de dados com SQL explícito. |
 | Jakarta Bean Validation | Validação dos dados de entrada. |
 | PostgreSQL | Banco de dados relacional utilizado pela aplicação. |
 | Maven | Gerenciamento de dependências e build do projeto. |
@@ -107,7 +149,7 @@ A aplicação foi organizada seguindo uma arquitetura em camadas, favorecendo se
 ```text
 Controller  ->  Service  ->  Repository  ->  Database
      |              |              |
-    DTO          Regras         JPA
+    DTO          Regras        JDBC
  Validação     de negócio    PostgreSQL
 ```
 
@@ -119,12 +161,51 @@ Controller  ->  Service  ->  Repository  ->  Database
 | `dto.request` | Define os objetos de entrada da API, isolando o contrato externo do modelo interno. |
 | `dto.response` | Define os objetos de resposta devolvidos pela API. |
 | `entity` | Representa as entidades persistidas no banco de dados. |
-| `repository` | Realiza a comunicação com o banco por meio do Spring Data JPA. |
+| `repository` | Realiza a comunicação com o banco por meio do Spring JDBC. |
 | `service` | Define as operações de negócio disponíveis. |
 | `service.impl` | Implementa as regras de negócio, validações e orquestração de persistência. |
 | `mapper` | Converte entidades em DTOs e DTOs em entidades. |
 | `exception` | Centraliza exceções e padroniza respostas de erro. |
-| `config` | Agrupa configurações auxiliares, como OpenAPI/Swagger. |
+| `Config` | Agrupa configurações auxiliares, como OpenAPI/Swagger. |
+
+---
+
+## Qualidade do Código e Organização
+
+O projeto foi estruturado para manter separação clara entre entrada HTTP, regras de negócio, persistência e representação de dados. Essa organização atende ao fator de avaliação de qualidade do código indicado no PDF.
+
+### Padrões aplicados
+
+| Prática | Aplicação |
+|---|---|
+| Separação por camadas | Controllers recebem requisições; services concentram regras; repository executa SQL; DTOs representam contratos externos. |
+| DTOs de entrada e saída | A API não expõe diretamente os objetos internos nem retorna senha nas respostas. |
+| Validação declarativa | Bean Validation com `@Valid`, `@NotBlank`, `@NotNull`, `@Email` e `@Size`. |
+| Tratamento centralizado de erro | `GlobalExceptionHandler` padroniza respostas para validações, regras de negócio, usuário inexistente e erros inesperados. |
+| Persistência explícita | `UserRepository` usa Spring JDBC com SQL claro para consulta e manipulação dos dados. |
+| Documentação interativa | Springdoc OpenAPI disponibiliza Swagger UI para leitura e teste dos contratos. |
+| Configuração reprodutível | Docker Compose cria o banco PostgreSQL e sobe a aplicação com variáveis de ambiente padronizadas. |
+
+### Fluxo principal de cadastro
+
+```mermaid
+sequenceDiagram
+    participant Client as Cliente HTTP
+    participant Controller as UserController
+    participant Service as UserServiceImpl
+    participant Repository as UserRepository JDBC
+    participant Database as PostgreSQL
+
+    Client->>Controller: POST /users/register/client
+    Controller->>Service: create(request, CLIENT)
+    Service->>Repository: existsByEmail / existsByLogin
+    Repository->>Database: SELECT COUNT
+    Service->>Repository: save(user)
+    Repository->>Database: INSERT INTO users
+    Repository-->>Service: User com ID gerado
+    Service-->>Controller: UserResponse
+    Controller-->>Client: 201 Created
+```
 
 ---
 
@@ -188,6 +269,46 @@ classDiagram
 | `state` | Estado. |
 | `zipCode` | CEP. |
 | `complement` | Complemento opcional. |
+
+---
+
+## Persistência JDBC e Modelo Relacional
+
+O projeto utiliza **Spring JDBC** para acesso ao banco de dados. A camada `repository` trabalha com SQL explícito por meio de `NamedParameterJdbcTemplate`, evitando dependência de JPA/Hibernate e deixando as operações de persistência transparentes.
+
+### Tabela `users`
+
+A estrutura da tabela é criada pelo arquivo `src/main/resources/schema.sql` durante a inicialização da aplicação, conforme a propriedade `spring.sql.init.mode`.
+
+| Coluna | Tipo | Restrição | Origem no domínio |
+|---|---|---|---|
+| `id` | `BIGSERIAL` | Chave primária | `User.id` |
+| `name` | `VARCHAR(255)` | Opcional no banco, obrigatório na API | `User.name` |
+| `email` | `VARCHAR(255)` | `NOT NULL`, `UNIQUE` | `User.email` |
+| `login` | `VARCHAR(255)` | `NOT NULL`, `UNIQUE` | `User.login` |
+| `password` | `VARCHAR(255)` | `NOT NULL` | `User.password` |
+| `last_modified_date` | `TIMESTAMP` | `NOT NULL` | `User.lastModifiedDate` |
+| `role` | `VARCHAR(50)` | `NOT NULL` | `User.role` |
+| `street` | `VARCHAR(255)` | Endereço | `Address.street` |
+| `number` | `VARCHAR(50)` | Endereço | `Address.number` |
+| `neighborhood` | `VARCHAR(255)` | Endereço | `Address.neighborhood` |
+| `city` | `VARCHAR(255)` | Endereço | `Address.city` |
+| `state` | `VARCHAR(100)` | Endereço | `Address.state` |
+| `zip_code` | `VARCHAR(30)` | Endereço | `Address.zipCode` |
+| `complement` | `VARCHAR(255)` | Endereço opcional | `Address.complement` |
+
+### Operações implementadas no repository
+
+| Método | Operação SQL equivalente | Finalidade |
+|---|---|---|
+| `save(User)` | `INSERT` ou `UPDATE` | Criação e atualização de usuários. |
+| `findAll()` | `SELECT ... FROM users ORDER BY id` | Listagem geral. |
+| `findById(Long)` | `SELECT ... WHERE id = :id` | Busca por identificador. |
+| `findByEmail(String)` | `SELECT ... WHERE email = :email` | Validação de unicidade de e-mail. |
+| `findByLogin(String)` | `SELECT ... WHERE login = :login` | Login e validação de unicidade. |
+| `existsByEmail(String)` | `SELECT COUNT(1)` | Verifica se e-mail já existe. |
+| `existsByLogin(String)` | `SELECT COUNT(1)` | Verifica se login já existe. |
+| `delete(User)` | `DELETE FROM users WHERE id = :id` | Exclusão de usuário. |
 
 ---
 
@@ -492,10 +613,7 @@ spring.datasource.url=${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/r
 spring.datasource.username=${SPRING_DATASOURCE_USERNAME:postgres}
 spring.datasource.password=${SPRING_DATASOURCE_PASSWORD:postgres}
 
-spring.jpa.hibernate.ddl-auto=${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
-spring.jpa.show-sql=${SPRING_JPA_SHOW_SQL:true}
-spring.jpa.properties.hibernate.format_sql=true
-spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+spring.sql.init.mode=${SPRING_SQL_INIT_MODE:always}
 ```
 
 ### Executar localmente com Maven
@@ -529,6 +647,20 @@ Resposta esperada:
 ```text
 API is running
 ```
+
+### Ordem recomendada para avaliação manual
+
+1. Subir o ambiente com Docker Compose.
+2. Acessar `/health` para confirmar que a API está ativa.
+3. Importar a collection Postman.
+4. Criar um usuário cliente.
+5. Criar um usuário dono de restaurante.
+6. Listar usuários com `GET /users`.
+7. Buscar usuário por ID.
+8. Validar login com `/auth/login`.
+9. Atualizar dados cadastrais.
+10. Trocar senha.
+11. Excluir usuário.
 
 ---
 
@@ -581,8 +713,58 @@ docker compose down -v
 | `SPRING_DATASOURCE_URL` | `jdbc:postgresql://localhost:5432/restaurant_db` | URL de conexão da aplicação. |
 | `SPRING_DATASOURCE_USERNAME` | `postgres` | Usuário utilizado pela aplicação. |
 | `SPRING_DATASOURCE_PASSWORD` | `postgres` | Senha utilizada pela aplicação. |
-| `SPRING_JPA_HIBERNATE_DDL_AUTO` | `update` | Estratégia de atualização do schema. |
-| `SPRING_JPA_SHOW_SQL` | `true` | Exibição de SQL no console. |
+| `SPRING_SQL_INIT_MODE` | `always` | Controla a execução do `schema.sql` na inicialização. |
+
+---
+
+## Build, Testes e Validação
+
+### Compilar o projeto
+
+No Windows:
+
+```bash
+mvnw.cmd -DskipTests compile
+```
+
+No Linux/macOS:
+
+```bash
+./mvnw -DskipTests compile
+```
+
+### Executar testes automatizados
+
+```bash
+mvnw.cmd test
+```
+
+ou:
+
+```bash
+./mvnw test
+```
+
+### Validação manual com Postman
+
+A validação funcional recomendada para a Fase 01 deve utilizar a collection Postman disponível em:
+
+```text
+postman/Restaurant-API-Local.postman_collection.json
+```
+
+Essa collection permite testar os fluxos exigidos no PDF: cadastro, consulta, alteração, exclusão, troca de senha e validação de login.
+
+### Critérios de aceite da Fase 01
+
+| Critério do PDF | Como validar |
+|---|---|
+| Endpoints funcionam conforme descrito | Executar a collection Postman e conferir códigos HTTP/respostas. |
+| Código organizado e documentado | Verificar camadas `controller`, `service`, `repository`, `dto`, `entity`, `mapper` e `exception`. |
+| Documentação de arquitetura, endpoints e execução | Consultar este README e a documentação PDF gerada. |
+| Docker Compose configurado | Executar `docker compose up --build`. |
+| Banco relacional integrado | Conferir conexão PostgreSQL e criação da tabela `users`. |
+| Repositório aberto | Acessar o link GitHub informado nesta documentação. |
 
 ---
 
@@ -604,7 +786,7 @@ restaurant-management-api
     │   │   └── com
     │   │       └── restaurantsystem
     │   │           └── restaurantmanagementapi
-    │   │               ├── config
+    │   │               ├── Config
     │   │               │   └── OpenApiConfig.java
     │   │               ├── RestaurantManagementApiApplication.java
     │   │               ├── controller
@@ -640,7 +822,8 @@ restaurant-management-api
     │   │                   └── impl
     │   │                       └── UserServiceImpl.java
     │   └── resources
-    │       └── application.properties
+    │       ├── application.properties
+    │       └── schema.sql
     └── test
         └── java
             └── com
@@ -655,7 +838,7 @@ restaurant-management-api
 
 | Requisito solicitado | Implementação no projeto | Status |
 |---|---|:---:|
-| Backend em Spring Boot | Projeto estruturado com Spring Boot, Spring Web MVC e Spring Data JPA. | Atendido |
+| Backend em Spring Boot | Projeto estruturado com Spring Boot, Spring Web MVC e Spring JDBC. | Atendido |
 | Gerenciamento de usuários | Endpoints para cadastro, listagem, busca, atualização e exclusão. | Atendido |
 | Dois tipos de usuário | Enum `Role` com `CLIENT` e `RESTAURANT_OWNER`. | Atendido |
 | Cadastro com nome, e-mail, login, senha, data de alteração e endereço | Entidade `User`, objeto `Address` e DTOs de entrada/saída. | Atendido |
@@ -667,7 +850,7 @@ restaurant-management-api
 | Código organizado | Organização por camadas: controller, service, repository, dto, mapper, entity e exception. | Atendido |
 | Documentação dos endpoints | Swagger/OpenAPI e seção de endpoints neste README. | Atendido |
 | Collection para testes | Arquivo Postman disponível em `postman/Restaurant-API-Local.postman_collection.json`. | Atendido |
-| Repositório de código | Projeto preparado para versionamento em repositório Git. | Atendido |
+| Repositório de código | Projeto publicado em `https://github.com/Andrefelix2810/restaurant-management-api`. | Atendido |
 
 ---
 
@@ -675,7 +858,7 @@ restaurant-management-api
 
 ### Separação entre DTO e entidade
 
-O projeto utiliza DTOs para entrada e saída de dados, evitando expor diretamente as entidades JPA nos contratos da API. Essa abordagem facilita a manutenção, melhora o controle sobre os dados trafegados e reduz o acoplamento entre a camada externa e o modelo de persistência.
+O projeto utiliza DTOs para entrada e saída de dados, evitando expor diretamente os objetos de domínio nos contratos da API. Essa abordagem facilita a manutenção, melhora o controle sobre os dados trafegados e reduz o acoplamento entre a camada externa e o modelo de persistência.
 
 ### Uso de camada de serviço
 
@@ -717,10 +900,3 @@ Embora o projeto atenda ao escopo da Fase 01, algumas melhorias podem ser consid
 A **Restaurant Management API** entrega uma base sólida para a primeira fase do sistema de gestão compartilhado de restaurantes. O projeto contempla os principais requisitos acadêmicos solicitados, apresentando uma API REST funcional, estruturada em camadas, integrada a banco relacional, documentada, testável via Postman e executável por Docker Compose.
 
 A solução foi construída com foco em organização, clareza arquitetural e possibilidade de evolução, permitindo que novas funcionalidades do domínio de restaurantes sejam incorporadas nas próximas fases do projeto sem comprometer a estrutura atual.
-
-## Repositório de Código
-
-Conforme solicitado nos entregáveis da Fase 01, o código-fonte da aplicação está disponibilizado em um repositório público no GitHub. Dessa forma, é possível realizar o download do projeto, consultar o histórico de versionamento, validar a estrutura de implementação e executar a aplicação em ambiente local ou conteinerizado.
-
-**Repositório GitHub:**  
-https://github.com/Andrefelix2810/restaurant-management-api
